@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="ao.covidtracking.romavicdosanjos.ui.home.MainFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_main">
+
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_country_details"
+            app:destination="@id/navigation_country_details" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_country_details"
+        android:name="ao.covidtracking.romavicdosanjos.ui.countryDetails.CountryDetailsFragment"
+        android:label="@string/title_country_details"
+        tools:layout="@layout/fragment_details_country">
+
+        <action
+            android:id="@+id/action_navigation_country_details_to_navigation_home"
+            app:destination="@id/navigation_home" />
+
+    </fragment>
+
+</navigation>
