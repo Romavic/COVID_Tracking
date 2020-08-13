@@ -34,7 +34,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/linearInformation" />
 
-    <ProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/progressCountryDetails"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"

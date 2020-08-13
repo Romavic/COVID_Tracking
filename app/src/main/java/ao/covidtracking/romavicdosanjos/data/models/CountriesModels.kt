@@ -1,4 +1,4 @@
-package ao.covidtracking.romavicdosanjos.model.models
+package ao.covidtracking.romavicdosanjos.data.models
 
 import com.google.gson.annotations.SerializedName
 

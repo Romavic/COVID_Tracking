@@ -1,13 +1,12 @@
-package ao.covidtracking.romavicdosanjos.model.requestApi
+package ao.covidtracking.romavicdosanjos.data.api
 
+import ao.covidtracking.romavicdosanjos.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-
-    private const val apiUrl = "https://api.covid19api.com/"
 
     private var okHttpClient = OkHttpClient.Builder()
         .connectTimeout(1, TimeUnit.MINUTES)
@@ -17,7 +16,7 @@ object ApiClient {
 
     private val retrofit: Retrofit = Retrofit
         .Builder()
-        .baseUrl(apiUrl)
+        .baseUrl(BuildConfig.ApiUrl)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

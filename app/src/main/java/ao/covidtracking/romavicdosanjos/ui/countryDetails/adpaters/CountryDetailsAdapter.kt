@@ -1,4 +1,4 @@
-package ao.covidtracking.romavicdosanjos.ui.countryDetails
+package ao.covidtracking.romavicdosanjos.ui.countryDetails.adpaters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import ao.covidtracking.romavicdosanjos.R
-import ao.covidtracking.romavicdosanjos.model.models.Countries
+import ao.covidtracking.romavicdosanjos.data.models.Countries
 import ao.covidtracking.romavicdosanjos.utils.dateToString
 
 
@@ -51,7 +51,7 @@ class CountryDetailsAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CountryDetailsAdapter.CountryDetailsHolder {
+    ): CountryDetailsHolder {
         val inflater = LayoutInflater.from(
             parent.context
         ).inflate(
@@ -65,7 +65,7 @@ class CountryDetailsAdapter(
     override fun getItemCount(): Int = countries.count()
 
     override fun onBindViewHolder(
-        holder: CountryDetailsAdapter.CountryDetailsHolder,
+        holder: CountryDetailsHolder,
         position: Int
     ) {
         holder.setIsRecyclable(false)

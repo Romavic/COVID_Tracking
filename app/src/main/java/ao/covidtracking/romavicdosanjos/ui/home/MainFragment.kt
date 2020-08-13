@@ -4,12 +4,12 @@ package ao.covidtracking.romavicdosanjos.ui.home
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,14 +17,20 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ao.covidtracking.romavicdosanjos.R
-import ao.covidtracking.romavicdosanjos.model.models.Country
-import ao.covidtracking.romavicdosanjos.model.models.SummaryCallback
+import ao.covidtracking.romavicdosanjos.data.api.ApiClient
+import ao.covidtracking.romavicdosanjos.data.helpers.SummaryHelpers
+import ao.covidtracking.romavicdosanjos.data.models.Country
+import ao.covidtracking.romavicdosanjos.data.viewmodels.SummaryViewModels
+import ao.covidtracking.romavicdosanjos.data.viewmodelsfactories.SummaryViewModelsFactories
+import ao.covidtracking.romavicdosanjos.ui.home.adapters.CountryAdapter
+import ao.covidtracking.romavicdosanjos.ui.home.adapters.SummaryAdapter
+import ao.covidtracking.romavicdosanjos.utils.Status
 import ao.covidtracking.romavicdosanjos.utils.dateTimeToString
 
 class MainFragment : Fragment() {
 
-    private lateinit var progressBar: ProgressBar
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var progressBar: ContentLoadingProgressBar
+    private lateinit var summaryViewModel: SummaryViewModels
     private lateinit var txtCountries: AppCompatTextView
     private lateinit var txtDateCases: AppCompatTextView
     private lateinit var recyclerSummary: RecyclerView
@@ -39,7 +45,13 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
-            mainViewModel = ViewModelProviders.of(this@MainFragment).get(MainViewModel::class.java)
+
+            summaryViewModel = ViewModelProviders.of(
+                this@MainFragment,
+                SummaryViewModelsFactories(
+                    SummaryHelpers(ApiClient.apiEndPoint)
+                )
+            )[SummaryViewModels::class.java]
 
             progressBar = findViewById(R.id.progressBar)
             recyclerSummary = findViewById(R.id.recyclerSummary)
@@ -54,59 +66,86 @@ class MainFragment : Fragment() {
             recyclerCountries.layoutManager = LinearLayoutManager(
                 context, RecyclerView.VERTICAL, false
             )
+            requestData()
+        }
+    }
 
-            summaryAdapter =
-                SummaryAdapter()
+    @SuppressLint("SetTextI18n")
+    private fun requestData() {
+        summaryAdapter =
+            SummaryAdapter()
 
-            countryAdapter =
-                CountryAdapter(
-                    context,
-                    object :
-                        CountryAdapter.ICountry {
-                        override fun onClick(
-                            countries: Country
-                        ) {
-                            val data: Bundle = Bundle().apply {
-                                putString("country", countries.country)
-                                putInt("totalDeaths", countries.totalDeaths)
-                                putInt("recovered", countries.totalRecovered)
-                                putInt("totalConfirmed", countries.totalConfirmed)
-                            }
-
-                            NavHostFragment.findNavController(
-                                this@MainFragment
-                            ).navigate(
-                                R.id.action_navigation_home_to_navigation_country_details,
-                                data
-                            )
+        countryAdapter =
+            CountryAdapter(
+                requireContext(),
+                object :
+                    CountryAdapter.ICountry {
+                    override fun onClick(
+                        countries: Country
+                    ) {
+                        val data: Bundle = Bundle().apply {
+                            putString("country", countries.country)
+                            putInt("totalDeaths", countries.totalDeaths)
+                            putInt("recovered", countries.totalRecovered)
+                            putInt("totalConfirmed", countries.totalConfirmed)
                         }
-                    }
-                )
 
-            mainViewModel.dataSummary.observe(viewLifecycleOwner,
-                Observer {
-                    when (it) {
-                        is SummaryCallback -> {
-                            progressBar.visibility = View.GONE
-                            txtDateCases.visibility = View.VISIBLE
-                            txtCountries.visibility = View.VISIBLE
-
-                            summaryAdapter.addAll(it.global)
-                            recyclerSummary.adapter = summaryAdapter
-                            txtDateCases.text = "Information Update date: ${dateTimeToString(it.date)}"
-
-                            countryAdapter.addAll(it.countries)
-                            recyclerCountries.adapter = countryAdapter
-                        }
-                        else -> {
-                            progressBar.visibility = View.VISIBLE
-                            txtDateCases.visibility = View.GONE
-                            txtCountries.visibility = View.GONE
-                            Log.i("Error", "MainActivity")
-                        }
+                        NavHostFragment.findNavController(
+                            this@MainFragment
+                        ).navigate(
+                            R.id.action_navigation_home_to_navigation_country_details,
+                            data
+                        )
                     }
                 }
             )
-        }
+
+        summaryViewModel.getSummaryViewModel().observe(viewLifecycleOwner,
+            Observer {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.LOADING -> {
+                            progressBar.show()
+
+                        }
+
+                        Status.ERROR -> {
+                            progressBar.hide()
+                            Toast.makeText(
+                                requireContext(),
+                                "Error data to show..",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        Status.SUCCESS -> {
+                            progressBar.hide()
+                            return@let resource.data?.let { response ->
+                                when {
+                                    response.countries.size == 0 && response.global.toString()
+                                        .isEmpty() -> {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "No data to show..",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    else -> {
+                                        summaryAdapter.addAll(response.global)
+                                        recyclerSummary.adapter = summaryAdapter
+                                        txtDateCases.text =
+                                            "Information Update date: ${dateTimeToString(
+                                                response.date
+                                            )}"
+                                        countryAdapter.addAll(response.countries)
+                                        recyclerCountries.adapter = countryAdapter
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        )
     }
 }

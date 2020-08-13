@@ -1,4 +1,4 @@
-package ao.covidtracking.romavicdosanjos.ui.home
+package ao.covidtracking.romavicdosanjos.ui.home.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import ao.covidtracking.romavicdosanjos.R
-import ao.covidtracking.romavicdosanjos.model.models.Country
+import ao.covidtracking.romavicdosanjos.data.models.Country
 
 class CountryAdapter(
     private var context: Context,
