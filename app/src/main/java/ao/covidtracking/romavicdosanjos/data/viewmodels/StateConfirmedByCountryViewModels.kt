@@ -2,12 +2,12 @@ package ao.covidtracking.romavicdosanjos.data.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import ao.covidtracking.romavicdosanjos.data.repositories.StateConfirmedByCountryRepositories
+import ao.covidtracking.romavicdosanjos.data.repository.Repository
 import ao.covidtracking.romavicdosanjos.utils.Resource
 import kotlinx.coroutines.Dispatchers
 
 class StateConfirmedByCountryViewModels(
-    private val stateConfirmedByCountryRepositories: StateConfirmedByCountryRepositories
+    private val stateConfirmedByCountryRepository: Repository
 ) : ViewModel() {
 
     fun getStateConfirmedByCountryViewModel(country: String) = liveData(Dispatchers.IO) {
@@ -15,7 +15,7 @@ class StateConfirmedByCountryViewModels(
         try {
             emit(
                 Resource.success(
-                    data = stateConfirmedByCountryRepositories.getStateConfirmedByCountryRepository(
+                    data = stateConfirmedByCountryRepository.getStateConfirmedByCountryHelper(
                         country
                     )
                 )

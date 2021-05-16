@@ -21,10 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ao.covidtracking.romavicdosanjos.R
 import ao.covidtracking.romavicdosanjos.data.api.ApiClient
-import ao.covidtracking.romavicdosanjos.data.helpers.StateConfirmedByCountryHelpers
+import ao.covidtracking.romavicdosanjos.data.bridge.Bridge
 import ao.covidtracking.romavicdosanjos.data.models.Countries
 import ao.covidtracking.romavicdosanjos.data.viewmodels.StateConfirmedByCountryViewModels
-import ao.covidtracking.romavicdosanjos.data.viewmodelsfactories.StateConfirmedByCountryViewModelsFactories
+import ao.covidtracking.romavicdosanjos.data.viewmodels.factory.ViewModelFactory
 import ao.covidtracking.romavicdosanjos.ui.countryDetails.adpaters.CountryDetailsAdapter
 import ao.covidtracking.romavicdosanjos.utils.Status
 
@@ -48,9 +48,7 @@ class CountryDetailsFragment : Fragment() {
 
             stateConfirmedByCountryViewModel = ViewModelProviders.of(
                 this@CountryDetailsFragment,
-                StateConfirmedByCountryViewModelsFactories(
-                    StateConfirmedByCountryHelpers(ApiClient.apiEndPoint)
-                )
+                ViewModelFactory(Bridge(ApiClient.RetrofitBuilder.endPoints))
             )[StateConfirmedByCountryViewModels::class.java]
 
             txtCountry = findViewById(R.id.txtCountry)

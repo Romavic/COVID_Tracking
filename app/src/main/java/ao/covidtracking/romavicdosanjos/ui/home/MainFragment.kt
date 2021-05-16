@@ -18,10 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ao.covidtracking.romavicdosanjos.R
 import ao.covidtracking.romavicdosanjos.data.api.ApiClient
-import ao.covidtracking.romavicdosanjos.data.helpers.SummaryHelpers
+import ao.covidtracking.romavicdosanjos.data.bridge.Bridge
 import ao.covidtracking.romavicdosanjos.data.models.Country
 import ao.covidtracking.romavicdosanjos.data.viewmodels.SummaryViewModels
-import ao.covidtracking.romavicdosanjos.data.viewmodelsfactories.SummaryViewModelsFactories
+import ao.covidtracking.romavicdosanjos.data.viewmodels.factory.ViewModelFactory
 import ao.covidtracking.romavicdosanjos.ui.home.adapters.CountryAdapter
 import ao.covidtracking.romavicdosanjos.ui.home.adapters.SummaryAdapter
 import ao.covidtracking.romavicdosanjos.utils.Status
@@ -48,9 +48,7 @@ class MainFragment : Fragment() {
 
             summaryViewModel = ViewModelProviders.of(
                 this@MainFragment,
-                SummaryViewModelsFactories(
-                    SummaryHelpers(ApiClient.apiEndPoint)
-                )
+                ViewModelFactory(Bridge(ApiClient.RetrofitBuilder.endPoints))
             )[SummaryViewModels::class.java]
 
             progressBar = findViewById(R.id.progressBar)
@@ -134,14 +132,16 @@ class MainFragment : Fragment() {
                                         summaryAdapter.addAll(response.global)
                                         recyclerSummary.adapter = summaryAdapter
                                         txtDateCases.text =
-                                            "Information Update date: ${dateTimeToString(
-                                                response.date
-                                            )}"
+                                            "Information Update date: ${
+                                                dateTimeToString(
+                                                    response.date
+                                                )
+                                            }"
                                         countryAdapter.addAll(response.countries)
                                         recyclerCountries.adapter = countryAdapter
                                     }
                                 }
-                            }
+                            }!!
                         }
                     }
                 }

@@ -7,15 +7,21 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import ao.covidtracking.romavicdosanjos.R
-import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var home_toolbar:Toolbar
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        home_toolbar = findViewById(R.id.home_toolbar)
+
         setSupportActionBar(home_toolbar)
         home_toolbar.setTitleTextAppearance(this, R.style.ToolbarFont)
     }
