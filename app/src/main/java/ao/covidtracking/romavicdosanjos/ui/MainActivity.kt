@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         when (item.itemId) {
             R.id.menuMoreInformation -> {
                 val link = "https://www.cdc.gov/coronavirus/2019-ncov/index.html"
@@ -44,7 +43,6 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 }
