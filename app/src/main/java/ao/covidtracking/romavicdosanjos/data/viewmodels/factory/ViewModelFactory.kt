@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ao.covidtracking.romavicdosanjos.data.bridge.Bridge
 import ao.covidtracking.romavicdosanjos.data.repository.Repository
+import ao.covidtracking.romavicdosanjos.data.viewmodels.SplashViewModel
 import ao.covidtracking.romavicdosanjos.data.viewmodels.StateConfirmedByCountryViewModels
 import ao.covidtracking.romavicdosanjos.data.viewmodels.SummaryViewModels
 
@@ -13,6 +14,9 @@ class ViewModelFactory(private val bridge: Bridge) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
+            modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
+                SplashViewModel() as T
+            }
             modelClass.isAssignableFrom(SummaryViewModels::class.java) -> {
                 SummaryViewModels(Repository(bridge)) as T
             }
